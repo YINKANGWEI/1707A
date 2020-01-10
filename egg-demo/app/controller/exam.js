@@ -5,10 +5,10 @@ const Controller = require('egg').Controller;
 class ExamController extends Controller {
     async add() { //添加成绩
         let { ctx } = this
-        let {theory,  Skill, name} = ctx.request.body 
-        let res = await ctx.service.exam.getUser(name)
+        let {theory,  Skill, name, studentNum} = ctx.request.body 
+        let res = await ctx.service.exam.getUser(name,studentNum)
         if (res == null) { //null 没有添加过
-            let data = await ctx.service.exam.add(theory,  Skill, name)
+            let data = await ctx.service.exam.add(theory,  Skill, name,studentNum)
             if (data.affectedRows == 1) {
                 ctx.body = {
                     code: 1,
@@ -47,6 +47,10 @@ class ExamController extends Controller {
 
     async update(){ //修改成绩
 
+    }
+
+    async list(){ //查看成绩
+        
     }
 }
 

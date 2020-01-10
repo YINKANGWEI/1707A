@@ -16,9 +16,9 @@ class UserController extends Controller {
     async registry() {
         //判断学号是否注册过 没有去注册
         let { ctx } = this
-        let { studentNum, password, username } = ctx.request.body
+        let { studentNum, password, username, role } = ctx.request.body
 
-        if (!studentNum || !password || !username) {
+        if (!studentNum || !password || !username || !role) {
             ctx.body = {
                 code: 3,
                 msg: '缺少参数'
@@ -30,7 +30,7 @@ class UserController extends Controller {
             ctx.validate(valiData)
             let data = await ctx.service.user.getUser(studentNum)
             if (data.length == 0) { // 没注册
-                let res = await ctx.service.user.registry(studentNum, password, username)
+                let res = await ctx.service.user.registry(studentNum, password, username,role)
                 if (res.affectedRows == 1) {
                     ctx.body = {
                         code: 1,
@@ -74,12 +74,13 @@ class UserController extends Controller {
             let data = await ctx.service.user.getUser(studentNum)
             if (data.length > 0) { // 有该用户请登录
                 let res = await ctx.service.user.login(studentNum, password)
-                let token = jwt.sign({...res[0]},this.app.config.keys,{expiresIn:'2 days'})
+                let token = jwt.sign({ ...res[0] }, this.app.config.keys, { expiresIn: '2 days' })
                 if (res) {
                     ctx.body = {
                         code: 1,
                         token,
-                        msg: '登录成功'
+                        msg: '登录成功',
+                        data: res
                     }
                 } else {
                     ctx.body = {
@@ -99,6 +100,28 @@ class UserController extends Controller {
                 msg: '参数类型不正确'
             }
         }
+    }
+
+    async student() { //没有添加成绩的学生
+        let { ctx } = this
+        let res = await ctx.service.user.student()
+        ctx.body = res
+    }
+
+    //身份(身份id获取身份名字)
+    async role() {
+        let { ctx } = this
+        let { id } = ctx.query
+        let res = await ctx.service.user.rolenName(id)
+        ctx.body = res
+    }
+
+    //权限列表菜单
+    async menu() {
+        let { ctx } = this
+        let { role_id } =  ctx.query
+        let res = await ctx.service.user.menu(role_id)
+        ctx.body = res
     }
 }
 

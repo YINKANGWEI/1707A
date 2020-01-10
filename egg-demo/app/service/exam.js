@@ -4,15 +4,15 @@ const Service = require('egg').Service;
 
 class ExamService extends Service {
     //判断用户是否添加过
-    async getUser(name) {
+    async getUser(name,studentNum) {
         let res = await this.app.mysql.get("exam", {
-            name
+            name,studentNum
         })
         return res
     }
-    async add(theory, Skill, name) {
+    async add(theory, Skill, name,studentNum) {
         let res = await this.app.mysql.insert("exam", {
-            theory, Skill, name
+            theory, Skill, name,studentNum
         })
         return res
     }

@@ -20,7 +20,7 @@ module.exports = () => {
                 let userInfo = jwt.verify(token, ctx.app.config.keys)
                 console.log(userInfo)
                 await next()
-            } catch (error) {
+            } catch (e) {
                 console.log(e, "e*********")
             }
         }
