@@ -1,27 +1,29 @@
 //中间件
-const whiteList = ['/login', '/registry', '/user/role']
+
 const jwt = require("jsonwebtoken")
 
+const whiteList = ['/login','/registry', '/list']
 module.exports = () => {
-    return async (ctx, next) => {
+    return async (ctx,next) =>{
         if (whiteList.includes(ctx.path)) {
             await next()
         } else {
-            let token = ctx.request.headers.authorization
+            let token = await ctx.request.headers.authorization
             if (!token) {
                 ctx.body = {
                     code: 4,
                     msg: '没有权限'
                 }
-                return;
+                return
             }
+
 
             try {
                 let userInfo = jwt.verify(token, ctx.app.config.keys)
-                console.log(userInfo)
+                console.log("userInfo-解密.....",userInfo);
                 await next()
-            } catch (e) {
-                console.log(e, "e*********")
+            } catch (error) {
+                console.log("error......", error);
             }
         }
     }

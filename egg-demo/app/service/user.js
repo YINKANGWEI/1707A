@@ -39,13 +39,6 @@ class UserService extends Service {
         return res;
     }
 
-    //获取身份名字
-    async rolenName(id){
-        let sql = `select * from role where id='${id}'`
-        let res = await this.app.mysql.query(sql)
-        return res;
-    }
-
     async menu(id){
         let power_id = `select power_id from role_power where role_id='${id}'`
         let sql = `select * from power where id in (${power_id})`

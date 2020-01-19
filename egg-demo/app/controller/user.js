@@ -15,7 +15,9 @@ class UserController extends Controller {
     //注册
     async registry() {
         //判断学号是否注册过 没有去注册
+        
         let { ctx } = this
+        //{password: "123456", studentNum:'5656546',username:'富士达',role: 2 }
         let { studentNum, password, username, role } = ctx.request.body
 
         if (!studentNum || !password || !username || !role) {
@@ -27,10 +29,10 @@ class UserController extends Controller {
         }
 
         try {
-            ctx.validate(valiData)
+            // ctx.validate(valiData)
             let data = await ctx.service.user.getUser(studentNum)
             if (data.length == 0) { // 没注册
-                let res = await ctx.service.user.registry(studentNum, password, username,role)
+                let res = await ctx.service.user.registry(studentNum, password, username, role)
                 if (res.affectedRows == 1) {
                     ctx.body = {
                         code: 1,
@@ -111,15 +113,18 @@ class UserController extends Controller {
     //身份(身份id获取身份名字)
     async role() {
         let { ctx } = this
-        let { id } = ctx.query
-        let res = await ctx.service.user.rolenName(id)
-        ctx.body = res
+        let res = await this.app.mysql.select("role")
+        ctx.body = {
+            code: 1,
+            msg: 'success',
+            data: [...res]
+        }
     }
 
     //权限列表菜单
     async menu() {
         let { ctx } = this
-        let { role_id } =  ctx.query
+        let { role_id } = ctx.query
         let res = await ctx.service.user.menu(role_id)
         ctx.body = res
     }
